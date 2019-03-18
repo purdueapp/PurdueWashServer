@@ -1,22 +1,19 @@
 package main
 
-import "net/http"
-import "fmt"
-import "io/ioutil"
+import (
+  "net/http"
+  "fmt"
+)
 
+func req(w http.ResponseWriter, r *http.Request) {
 
+  fmt.Fprintf(w, "hi")
+
+}
 
 func main() {
 
-  url := "http://wpvitassuds01.itap.purdue.edu/washalertweb/washalertweb.aspx"
-  resp, _ := http.Get(url)
-
-  bytes, _ := ioutil.ReadAll(resp.Body)
-
-  fmt.Println("HTML:\n\n", string(bytes))
-
-
-
-  resp.Body.Close()
+  http.HandleFunc("/", req)
+  http.ListenAndServe(":8000", nil)
 
 }
