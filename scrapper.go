@@ -1,40 +1,92 @@
 package main
 
 import (
-  "fmt"
+//  "fmt"
   "github.com/gocolly/colly"
 )
 
 type room struct {
-  name string
-  imageUrl string
-  availableWashers int32
-  totalWashers int32
-  availableDryers int32
-  totalDryers int32
-  machines []machine
+  Name string
+  Url string
+  ImageUrl string
+  AvailableWashers int32
+  TotalWashers int32
+  AvailableDryers int32
+  TotalDryers int32
+  Machines []machine
 }
 
 type machine struct {
-  name string
-  status string
-  timeRemaining int32
+  Name string
+  Status string
+  TimeRemaining int32
 }
 
-func main() {
-  rooms := []room{}
+var url = "http://wpvitassuds01.itap.purdue.edu/washalertweb/washalertweb.aspx"
+
+func getLoc() []room {
+  var rooms = []room{}
 
   c := colly.NewCollector()
 
-  c.OnHTML("table tbody tr td center", func(e *colly.HTMLElement) {
-    e.ForEach("h2", func(_ int, el *colly.HTMLElement) {
-      room := room{}
-      room.name = e.Text
-      rooms.append(rooms, room)
-      fmt.Println(e.Text)
-
-    })
+  c.OnHTML("h2 a[href]", func(e *colly.HTMLElement) {
+    temp := room{}
+    temp.Name = e.Text
+    temp.Url = e.Attr("href")
+    rooms = append(rooms, temp)
   })
 
-  c.Visit("http://wpvitassuds01.itap.purdue.edu/washalertweb/washalertweb.aspx")
+  c.Visit(url)
+
+  return rooms
+}
+
+func getMachines(room dorm) []machine {
+  var machines = []machine{}
+
+  c := colly.NewCollector()
+  c.OnHTML("MachineReadyMode", func(e *colly.HTMLElement) {
+    temp := machine{}
+    temp.Name = e.ChildText("name")
+    temp.Status = e.ChildText("status")
+    temp.TimeRemaining = e.ChildText("time")
+    machines = append(machines, temp)
+  }
+
+  c.OnHTML("MachineRunMode", func(e *colly.HTMLElement) {
+    temp := machine{}
+    temp.Name = e.ChildText("name")
+    temp.Status = e.ChildText("status")
+    temp.TimeRemaining = e.ChildText("time")
+    machines = append(machines, temp)
+  }
+
+  c.OnHTML("MachineEndOfCycle", func(e *colly.HTMLElement) {
+    temp := machine{}
+    temp.Name = e.ChildText("name")
+    temp.Status = e.ChildText("status")
+    temp.TimeRemaining = e.ChildText("time")
+    machines = append(machines, temp)
+  }
+
+  c.OnHTML("MachineRunModeAlmostDone", func(e *colly.HTMLElement) {
+    temp := machine{}
+    temp.Name = e.ChildText("name")
+    temp.Status = e.ChildText("status")
+    temp.TimeRemaining = e.ChildText("time")
+    machines = append(machines, temp)
+  }
+
+  c.Visit(url + room.Url)
+
+  return machines
+}
+
+func main() {
+  var rooms = getLoc()
+  for _, room := range rooms {
+    room.machine = getMachines(room)
+  }
+
+  fmt.Println(rooms)
 }
