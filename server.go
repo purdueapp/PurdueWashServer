@@ -7,7 +7,8 @@ import (
 
 func req(w http.ResponseWriter, r *http.Request) {
 
-  fmt.Fprintf(w, "hi")
+  var lol string = getHTML()
+  fmt.Fprintf(w, lol)
 
 }
 

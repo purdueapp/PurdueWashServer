@@ -16,8 +16,8 @@ func main() {
     fmt.Println(e.Text)
   })
 
-  c.OnHTML("body", func(e *colly.HTMLElement) {
-    e.ForEach("tr .MachineReadyMode", func(_ int, el *colly.HTMLElement) {
+  c.OnHTML("table body tr td", func(e *colly.HTMLElement) {
+    e.ForEach("header", func(_ int, el *colly.HTMLElement) {
         fmt.Println(el.Text)
     })
   })
