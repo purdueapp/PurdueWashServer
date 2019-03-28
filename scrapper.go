@@ -1,7 +1,7 @@
 package main
 
 import (
-//  "fmt"
+  "fmt"
   "github.com/gocolly/colly"
 )
 
@@ -41,43 +41,30 @@ func getLoc() []room {
   return rooms
 }
 
-func getMachines(room dorm) []machine {
+func getMachines(dorm room) []machine {
   var machines = []machine{}
 
   c := colly.NewCollector()
-  c.OnHTML("MachineReadyMode", func(e *colly.HTMLElement) {
+  c.OnHTML("tr.MachineReadyMode", func(e *colly.HTMLElement) {
     temp := machine{}
-    temp.Name = e.ChildText("name")
-    temp.Status = e.ChildText("status")
-    temp.TimeRemaining = e.ChildText("time")
+    temp.Name = e.ChildText("td.name")
+    temp.Status = e.ChildText("td.status")
+    //temp.TimeRemaining = e.ChildText("time")
     machines = append(machines, temp)
-  }
+  })
 
   c.OnHTML("MachineRunMode", func(e *colly.HTMLElement) {
-    temp := machine{}
-    temp.Name = e.ChildText("name")
-    temp.Status = e.ChildText("status")
-    temp.TimeRemaining = e.ChildText("time")
-    machines = append(machines, temp)
-  }
+  })
 
   c.OnHTML("MachineEndOfCycle", func(e *colly.HTMLElement) {
-    temp := machine{}
-    temp.Name = e.ChildText("name")
-    temp.Status = e.ChildText("status")
-    temp.TimeRemaining = e.ChildText("time")
-    machines = append(machines, temp)
-  }
+  })
 
   c.OnHTML("MachineRunModeAlmostDone", func(e *colly.HTMLElement) {
-    temp := machine{}
-    temp.Name = e.ChildText("name")
-    temp.Status = e.ChildText("status")
-    temp.TimeRemaining = e.ChildText("time")
-    machines = append(machines, temp)
-  }
+  })
 
-  c.Visit(url + room.Url)
+  c.Visit(url + dorm.Url)
+
+  fmt.Println(machines)
 
   return machines
 }
@@ -85,7 +72,7 @@ func getMachines(room dorm) []machine {
 func main() {
   var rooms = getLoc()
   for _, room := range rooms {
-    room.machine = getMachines(room)
+    room.Machines = getMachines(room)
   }
 
   fmt.Println(rooms)
