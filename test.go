@@ -10,19 +10,20 @@ var url = "http://wpvitassuds01.itap.purdue.edu/washalertweb/washalertweb.aspx"
 func main() {
   c := colly.NewCollector()
 
-  c.OnRequest(func(r *colly.Request) {
-    fmt.Println("visiting", r.URL)
-  })
+//  c.OnHTML("tr.MachineReadyMode", func(e *colly.HTMLElement) {
+//    fmt.Println(e.ChildText("td.name"))
+//    fmt.Println(e.ChildText("td.status"))
+//    fmt.Println(e.ChildText("td.time"))
+//  })
 
-  //c.OnHTML("table tbody tr td center h2", func(e *colly.HTMLElement) {
-  //  fmt.Println(e.Text)
-  //})
-
-  c.OnHTML("table body tr", func(e *colly.HTMLElement) {
-    e.ForEach("", func(_ int, el *colly.HTMLElement) {
-        fmt.Println(el.ChildText("td[header]"))
-    })
+  var count int32 = 0
+  c.OnHTML("tr.MachineRunMode", func(e *colly.HTMLElement) {
+    fmt.Println(e.ChildText("td.name"))
+    fmt.Println(e.ChildText("td.status"))
+    fmt.Println(e.ChildText("td.time"))
+    count++
   })
 
   c.Visit(url)
+  fmt.Println(count)
 }
