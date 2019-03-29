@@ -2,8 +2,8 @@ package main
 
 import (
   "fmt"
-  "github.com/gocolly/colly"
   "strings"
+  "github.com/gocolly/colly"
 )
 
 type Room struct {
@@ -125,5 +125,8 @@ func scrape() []Room {
     scrape = append(scrape, GetInfo(room))
   }
   fmt.Println(scrape)
+
+  var lol = structs.Map(scrape)
+  fmt.Println(lol)
   return scrape
 }
