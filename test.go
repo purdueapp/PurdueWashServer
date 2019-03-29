@@ -6,7 +6,7 @@ import (
   "strings"
 )
 
-var url = "http://wpvitassuds01.itap.purdue.edu/washalertweb/washalertweb.aspx"
+//var url = "http://wpvitassuds01.itap.purdue.edu/washalertweb/washalertweb.aspx"
 
 func main() {
   c := colly.NewCollector()
