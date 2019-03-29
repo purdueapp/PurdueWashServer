@@ -14,10 +14,10 @@ func GetLoc() Rooms {
   c := colly.NewCollector()
 
   c.OnHTML("h2 a[href]", func(e *colly.HTMLElement) {
-    temp := Room{}
-    temp.Name = e.Text
-    temp.Url = e.Attr("href")
-    rooms = append(rooms, temp)
+    room := Room{}
+    room.Name = e.Text
+    room.Url = e.Attr("href")
+    rooms = append(rooms, room)
   })
 
   c.Visit(url)
@@ -34,11 +34,11 @@ func GetInfo(room Room) Room {
 
   c := colly.NewCollector()
   c.OnHTML("tr.MachineReadyMode", func(e *colly.HTMLElement) {
-    temp := Machine{}
-    temp.Name = e.ChildText("td.name")
-    temp.Status = e.ChildText("td.status")
-    temp.TimeRemaining = e.ChildText("time")
-    machines = append(machines, temp)
+    machine := Machine{}
+    machine.Name = e.ChildText("td.name")
+    machine.Status = e.ChildText("td.status")
+    machine.TimeRemaining = e.ChildText("time")
+    machines = append(machines, machine)
 
     if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
       availDry++
@@ -50,11 +50,11 @@ func GetInfo(room Room) Room {
   })
 
   c.OnHTML("MachineRunMode", func(e *colly.HTMLElement) {
-    temp := Machine{}
-    temp.Name = e.ChildText("td.name")
-    temp.Status = e.ChildText("td.status")
-    temp.TimeRemaining = e.ChildText("time")
-    machines = append(machines, temp)
+    machine := Machine{}
+    machine.Name = e.ChildText("td.name")
+    machine.Status = e.ChildText("td.status")
+    machine.TimeRemaining = e.ChildText("time")
+    machines = append(machines, machine)
 
     if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
       dry++
@@ -64,11 +64,11 @@ func GetInfo(room Room) Room {
   })
 
   c.OnHTML("MachineEndOfCycle", func(e *colly.HTMLElement) {
-    temp := Machine{}
-    temp.Name = e.ChildText("td.name")
-    temp.Status = e.ChildText("td.status")
-    temp.TimeRemaining = e.ChildText("time")
-    machines = append(machines, temp)
+    machine := Machine{}
+    machine.Name = e.ChildText("td.name")
+    machine.Status = e.ChildText("td.status")
+    machine.TimeRemaining = e.ChildText("time")
+    machines = append(machines, machine)
 
     if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
       dry++
@@ -78,11 +78,11 @@ func GetInfo(room Room) Room {
   })
 
   c.OnHTML("MachineRunModeAlmostDone", func(e *colly.HTMLElement) {
-    temp := Machine{}
-    temp.Name = e.ChildText("td.name")
-    temp.Status = e.ChildText("td.status")
-    temp.TimeRemaining = e.ChildText("time")
-    machines = append(machines, temp)
+    machine := Machine{}
+    machine.Name = e.ChildText("td.name")
+    machine.Status = e.ChildText("td.status")
+    machine.TimeRemaining = e.ChildText("time")
+    machines = append(machines, machine)
 
     if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
       dry++
