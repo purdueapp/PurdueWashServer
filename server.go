@@ -3,7 +3,8 @@ package main
 import (
   "net/http"
   "encoding/json"
-//  "fmt"
+  "fmt"
+  "log"
 )
 
 type LaundryRoom struct {
@@ -20,6 +21,13 @@ type Machine struct {
         Name          string  `json:"name"`
         Status        string  `json:"status"`
         TimeRemaining int32   `json:"timeRemaining"`
+}
+
+func main() {
+  fmt.Println("Server started and running at port 8421")
+
+  http.HandleFunc("/", req)
+  log.Fatal(http.ListenAndServe(":8421", nil))
 }
 
 func req(w http.ResponseWriter, r *http.Request) {
@@ -40,13 +48,14 @@ func req(w http.ResponseWriter, r *http.Request) {
   machines = append(machines, Machine{"Dryer 06", "out of order", 0})
 
   data.Machines = machines
-
   laundryRooms := [1]LaundryRoom{data}
 
-  json.NewEncoder(w).Encode(laundryRooms)
-}
+  js, err := json.Marshal(laundryRooms)
 
-func main() {
-  http.HandleFunc("/", req)
-  http.ListenAndServe(":8424", nil)
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+
+  w.Header().Set("Content-Type", "application/json")
+  w.Write(js)
 }
