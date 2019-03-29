@@ -2,37 +2,37 @@ package main
 
 import (
   "fmt"
+  "strings"
   "github.com/gocolly/colly"
 )
 
-type room struct {
-  Name string
-  Url string
-  ImageUrl string
-  AvailableWashers int32
-  TotalWashers int32
-  AvailableDryers int32
-  TotalDryers int32
-  Machines []machine
+type Room struct {
+  name string
+  url string
+  availableWashers int32
+  totalWashers int32
+  availableDryers int32
+  totalDryers int32
+  machines []Machine
 }
 
-type machine struct {
-  Name string
-  Status string
-  TimeRemaining string
+type Machine struct {
+  name string
+  status string
+  timeRemaining string
 }
 
 var url = "http://wpvitassuds01.itap.purdue.edu/washalertweb/washalertweb.aspx"
 
-func getLoc() []room {
-  var rooms = []room{}
+func GetLoc() []Room {
+  var rooms = []Room{}
 
   c := colly.NewCollector()
 
   c.OnHTML("h2 a[href]", func(e *colly.HTMLElement) {
-    temp := room{}
-    temp.Name = e.Text
-    temp.Url = e.Attr("href")
+    temp := Room{}
+    temp.name = e.Text
+    temp.url = e.Attr("href")
     rooms = append(rooms, temp)
   })
 
@@ -41,8 +41,8 @@ func getLoc() []room {
   return rooms
 }
 
-func getMachines(dorm room) []machine {
-  var machines = []machine{}
+func GetInfo(dorm Room) Room {
+  var machines = []Machine{}
   var availWash int32 = 0
   var availDry int32 = 0
   var wash int32 = 0
@@ -50,13 +50,13 @@ func getMachines(dorm room) []machine {
 
   c := colly.NewCollector()
   c.OnHTML("tr.MachineReadyMode", func(e *colly.HTMLElement) {
-    temp := machine{}
-    temp.Name = e.ChildText("td.name")
-    temp.Status = e.ChildText("td.status")
-    temp.TimeRemaining = e.ChildText("time")
+    temp := Machine{}
+    temp.name = e.ChildText("td.name")
+    temp.status = e.ChildText("td.status")
+    temp.timeRemaining = e.ChildText("time")
     machines = append(machines, temp)
 
-    if e.ChildText("td.type") == "Dryer" {
+    if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
       availDry++
       dry++
     } else {
@@ -66,13 +66,13 @@ func getMachines(dorm room) []machine {
   })
 
   c.OnHTML("MachineRunMode", func(e *colly.HTMLElement) {
-    temp := machine{}
-    temp.Name = e.ChildText("td.name")
-    temp.Status = e.ChildText("td.status")
-    temp.TimeRemaining = e.ChildText("time")
+    temp := Machine{}
+    temp.name = e.ChildText("td.name")
+    temp.status = e.ChildText("td.status")
+    temp.timeRemaining = e.ChildText("time")
     machines = append(machines, temp)
 
-    if e.ChildText("td.type") == "Dryer" {
+    if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
       dry++
     } else {
       wash++
@@ -80,13 +80,13 @@ func getMachines(dorm room) []machine {
   })
 
   c.OnHTML("MachineEndOfCycle", func(e *colly.HTMLElement) {
-    temp := machine{}
-    temp.Name = e.ChildText("td.name")
-    temp.Status = e.ChildText("td.status")
-    temp.TimeRemaining = e.ChildText("time")
+    temp := Machine{}
+    temp.name = e.ChildText("td.name")
+    temp.status = e.ChildText("td.status")
+    temp.timeRemaining = e.ChildText("time")
     machines = append(machines, temp)
 
-    if e.ChildText("td.type") == "Dryer" {
+    if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
       dry++
     } else {
       wash++
@@ -94,29 +94,39 @@ func getMachines(dorm room) []machine {
   })
 
   c.OnHTML("MachineRunModeAlmostDone", func(e *colly.HTMLElement) {
-    temp := machine{}
-    temp.Name = e.ChildText("td.name")
-    temp.Status = e.ChildText("td.status")
-    temp.TimeRemaining = e.ChildText("time")
+    temp := Machine{}
+    temp.name = e.ChildText("td.name")
+    temp.status = e.ChildText("td.status")
+    temp.timeRemaining = e.ChildText("time")
     machines = append(machines, temp)
 
-    if e.ChildText("td.type") == "Dryer" {
+    if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
       dry++
     } else {
       wash++
     }
   })
 
-  c.Visit(url + dorm.Url)
+  c.Visit(url + dorm.url)
 
-  return machines
+  dorm.availableWashers = availWash
+  dorm.totalWashers = wash
+  dorm.availableDryers = availDry
+  dorm.totalDryers = dry
+  dorm.machines = machines
+
+  return dorm
 }
 
-func main() {
-  var rooms = getLoc()
+func scrape() []Room {
+  var rooms = GetLoc()
+  var scrape = []Room{}
   for _, room := range rooms {
-    room.Machines = getMachines(room)
-    fmt.Println(room.Machines)
+    scrape = append(scrape, GetInfo(room))
   }
+  fmt.Println(scrape)
 
+  var lol = structs.Map(scrape)
+  fmt.Println(lol)
+  return scrape
 }
