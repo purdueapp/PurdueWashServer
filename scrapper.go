@@ -6,22 +6,6 @@ import (
   "github.com/gocolly/colly"
 )
 
-type Room struct {
-  name string
-  url string
-  availableWashers int32
-  totalWashers int32
-  availableDryers int32
-  totalDryers int32
-  machines []Machine
-}
-
-type Machine struct {
-  name string
-  status string
-  timeRemaining string
-}
-
 var url = "http://wpvitassuds01.itap.purdue.edu/washalertweb/washalertweb.aspx"
 
 func GetLoc() []Room {
@@ -31,8 +15,8 @@ func GetLoc() []Room {
 
   c.OnHTML("h2 a[href]", func(e *colly.HTMLElement) {
     temp := Room{}
-    temp.name = e.Text
-    temp.url = e.Attr("href")
+    temp.Name = e.Text
+    temp.Url = e.Attr("href")
     rooms = append(rooms, temp)
   })
 
@@ -51,9 +35,9 @@ func GetInfo(dorm Room) Room {
   c := colly.NewCollector()
   c.OnHTML("tr.MachineReadyMode", func(e *colly.HTMLElement) {
     temp := Machine{}
-    temp.name = e.ChildText("td.name")
-    temp.status = e.ChildText("td.status")
-    temp.timeRemaining = e.ChildText("time")
+    temp.Name = e.ChildText("td.name")
+    temp.Status = e.ChildText("td.status")
+    temp.TimeRemaining = e.ChildText("time")
     machines = append(machines, temp)
 
     if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
@@ -67,9 +51,9 @@ func GetInfo(dorm Room) Room {
 
   c.OnHTML("MachineRunMode", func(e *colly.HTMLElement) {
     temp := Machine{}
-    temp.name = e.ChildText("td.name")
-    temp.status = e.ChildText("td.status")
-    temp.timeRemaining = e.ChildText("time")
+    temp.Name = e.ChildText("td.name")
+    temp.Status = e.ChildText("td.status")
+    temp.TimeRemaining = e.ChildText("time")
     machines = append(machines, temp)
 
     if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
@@ -81,9 +65,9 @@ func GetInfo(dorm Room) Room {
 
   c.OnHTML("MachineEndOfCycle", func(e *colly.HTMLElement) {
     temp := Machine{}
-    temp.name = e.ChildText("td.name")
-    temp.status = e.ChildText("td.status")
-    temp.timeRemaining = e.ChildText("time")
+    temp.Name = e.ChildText("td.name")
+    temp.Status = e.ChildText("td.status")
+    temp.TimeRemaining = e.ChildText("time")
     machines = append(machines, temp)
 
     if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
@@ -95,9 +79,9 @@ func GetInfo(dorm Room) Room {
 
   c.OnHTML("MachineRunModeAlmostDone", func(e *colly.HTMLElement) {
     temp := Machine{}
-    temp.name = e.ChildText("td.name")
-    temp.status = e.ChildText("td.status")
-    temp.timeRemaining = e.ChildText("time")
+    temp.Name = e.ChildText("td.name")
+    temp.Status = e.ChildText("td.status")
+    temp.TimeRemaining = e.ChildText("time")
     machines = append(machines, temp)
 
     if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
@@ -107,13 +91,13 @@ func GetInfo(dorm Room) Room {
     }
   })
 
-  c.Visit(url + dorm.url)
+  c.Visit(url + dorm.Url)
 
-  dorm.availableWashers = availWash
-  dorm.totalWashers = wash
-  dorm.availableDryers = availDry
-  dorm.totalDryers = dry
-  dorm.machines = machines
+  dorm.AvailableWashers = availWash
+  dorm.TotalWashers = wash
+  dorm.AvailableDryers = availDry
+  dorm.TotalDryers = dry
+  dorm.Machines = machines
 
   return dorm
 }
@@ -126,7 +110,5 @@ func scrape() []Room {
   }
   fmt.Println(scrape)
 
-  var lol = structs.Map(scrape)
-  fmt.Println(lol)
   return scrape
 }
