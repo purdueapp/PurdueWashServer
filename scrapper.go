@@ -108,7 +108,6 @@ func Scrape() Rooms {
   for _, room := range rooms {
     scrape = append(scrape, GetInfo(room))
   }
-  fmt.Println(scrape)
 
   return scrape
 }
