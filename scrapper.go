@@ -8,8 +8,8 @@ import (
 
 var url = "http://wpvitassuds01.itap.purdue.edu/washalertweb/washalertweb.aspx"
 
-func GetLoc() []Room {
-  var rooms = []Room{}
+func GetLoc() Rooms {
+  var rooms = Rooms{}
 
   c := colly.NewCollector()
 
@@ -25,8 +25,8 @@ func GetLoc() []Room {
   return rooms
 }
 
-func GetInfo(dorm Room) Room {
-  var machines = []Machine{}
+func GetInfo(room Room) Room {
+  var machines = Machines{}
   var availWash int32 = 0
   var availDry int32 = 0
   var wash int32 = 0
@@ -91,20 +91,20 @@ func GetInfo(dorm Room) Room {
     }
   })
 
-  c.Visit(url + dorm.Url)
+  c.Visit(url + room.Url)
 
-  dorm.AvailableWashers = availWash
-  dorm.TotalWashers = wash
-  dorm.AvailableDryers = availDry
-  dorm.TotalDryers = dry
-  dorm.Machines = machines
+  room.AvailableWashers = availWash
+  room.TotalWashers = wash
+  room.AvailableDryers = availDry
+  room.TotalDryers = dry
+  room.Machines = machines
 
-  return dorm
+  return room
 }
 
-func scrape() []Room {
+func Scrape() Rooms {
   var rooms = GetLoc()
-  var scrape = []Room{}
+  var scrape = Rooms{}
   for _, room := range rooms {
     scrape = append(scrape, GetInfo(room))
   }

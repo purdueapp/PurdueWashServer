@@ -1,3 +1,5 @@
+package main
+
 type Room struct {
   Name              string    `json: "name"`
   Url               string    `json: "url"`

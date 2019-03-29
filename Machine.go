@@ -1,3 +1,5 @@
+package main
+
 type Machine struct {
   Name          string `json: "name"`
   Status        string `json: "status"`
