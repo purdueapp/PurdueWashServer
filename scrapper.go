@@ -122,7 +122,7 @@ func String(n int32) string {
   }
   for {
     pos--
-    buf[pos], i = '0'+byte(i%10), i/10
+    buf[pos], i = '0' + byte(i % 10), i / 10
     if i == 0 {
       if signed {
         pos--
