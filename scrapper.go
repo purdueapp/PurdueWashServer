@@ -49,7 +49,15 @@ func GetInfo(room Room) Room {
     }
   })
 
-  c.OnHTML("MachineRunMode", func(e *colly.HTMLElement) {
+  c.OnHTML("tr.MachineUnknown", func(e *colly.HTMLElement) {
+    machine := Machine{}
+    machine.Name = e.ChildText("td.name")
+    machine.Status = e.ChildText("td.status")
+    machine.TimeRemaining = e.ChildText("time")
+    machines = append(machines, machine)
+  })
+
+  c.OnHTML("tr.MachineRunMode", func(e *colly.HTMLElement) {
     machine := Machine{}
     machine.Name = e.ChildText("td.name")
     machine.Status = e.ChildText("td.status")
@@ -63,7 +71,7 @@ func GetInfo(room Room) Room {
     }
   })
 
-  c.OnHTML("MachineEndOfCycle", func(e *colly.HTMLElement) {
+  c.OnHTML("tr.MachineEndOfCycleMode", func(e *colly.HTMLElement) {
     machine := Machine{}
     machine.Name = e.ChildText("td.name")
     machine.Status = e.ChildText("td.status")
@@ -77,7 +85,7 @@ func GetInfo(room Room) Room {
     }
   })
 
-  c.OnHTML("MachineRunModeAlmostDone", func(e *colly.HTMLElement) {
+  c.OnHTML("tr.MachineRunModeAlmostDone", func(e *colly.HTMLElement) {
     machine := Machine{}
     machine.Name = e.ChildText("td.name")
     machine.Status = e.ChildText("td.status")
