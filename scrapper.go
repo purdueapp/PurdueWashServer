@@ -93,10 +93,10 @@ func GetInfo(room Room) Room {
 
   c.Visit(url + room.Url)
 
-  room.AvailableWashers = availWash
-  room.TotalWashers = wash
-  room.AvailableDryers = availDry
-  room.TotalDryers = dry
+  room.AvailableWashers = String(availWash)
+  room.TotalWashers     = String(wash)
+  room.AvailableDryers  = String(availDry)
+  room.TotalDryers      = String(dry)
   room.Machines = machines
 
   return room
@@ -110,4 +110,25 @@ func Scrape() Rooms {
   }
 
   return scrape
+}
+
+func String(n int32) string {
+  buf := [11]byte{}
+  pos := len(buf)
+  i := int64(n)
+  signed := i < 0
+  if signed {
+    i = -i
+  }
+  for {
+    pos--
+    buf[pos], i = '0'+byte(i%10), i/10
+    if i == 0 {
+      if signed {
+        pos--
+        buf[pos] = '-'
+      }
+      return string(buf[pos:])
+    }
+  }
 }
