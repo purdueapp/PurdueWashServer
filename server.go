@@ -19,12 +19,6 @@ func req(w http.ResponseWriter, r *http.Request) {
   laundryRooms := Rooms{}
   laundryRooms = Scrape()
 
-  js, err := json.Marshal(laundryRooms)
-
-  if err != nil {
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-  }
-
   w.Header().Set("Content-Type", "application/json")
-  w.Write(js)
+  json.NewEncoder(w).Encode(laundryRooms)
 }
