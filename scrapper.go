@@ -40,7 +40,7 @@ func GetInfo(room Room) Room {
       machine := Machine{}
       machine.Name = e.ChildText("td.name")
       machine.Status = e.ChildText("td.status")
-      machine.TimeRemaining = e.ChildText("time")
+      machine.TimeRemaining = e.ChildText("td.time")
       machines = append(machines, machine)
 
       if strings.Compare(machine.Status, "Available") == 0 {
