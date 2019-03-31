@@ -45,16 +45,18 @@ func GetInfo(room Room) Room {
 
       machines = append(machines, machine)
 
-      if strings.Compare(machine.Status, "Available") == 0 {
-        if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
+      if strings.Compare(e.ChildText("td.type"), "Dryer") == 0 {
+        if strings.Compare(machine.Status, "Available") == 0 {
           availDry++
-        } else {
+        }
+        dry++
+      } else {
+        if strings.Compare(machine.Status, "Available") == 0 {
           availWash++
         }
+        wash++
       }
 
-      dry++
-      wash++
     }
   })
 
