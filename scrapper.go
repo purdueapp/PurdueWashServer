@@ -14,9 +14,10 @@ func GetLoc() Rooms {
   c := colly.NewCollector()
 
   c.OnHTML("h2 a[href]", func(e *colly.HTMLElement) {
-    room := Room{}
-    room.Name = e.Text
-    room.Url = e.Attr("href")
+    room := Room{
+      Name: e.Text,
+      Url:  e.Attr("href"),
+    }
     rooms = append(rooms, room)
   })
 
@@ -35,12 +36,13 @@ func GetInfo(room Room) Room {
   var dry int32 = 0
 
   c.OnHTML("tr", func(e *colly.HTMLElement) {
-    test := e.ChildText("td.name")
-    if strings.Compare(test, "") != 0 {
-      machine := Machine{}
-      machine.Name = e.ChildText("td.name")
-      machine.Status = e.ChildText("td.status")
-      machine.TimeRemaining = e.ChildText("td.time")
+    if strings.Compare(e.ChildText("td.name"), "") != 0 {
+      machine := Machine{
+        Name:           e.ChildText("td.name"),
+        Status:         e.ChildText("td.status"),
+        TimeRemaining:  e.ChildText("td.time"),
+      }
+
       machines = append(machines, machine)
 
       if strings.Compare(machine.Status, "Available") == 0 {
@@ -62,7 +64,7 @@ func GetInfo(room Room) Room {
   room.TotalWashers     = String(wash)
   room.AvailableDryers  = String(availDry)
   room.TotalDryers      = String(dry)
-  room.Machines = machines
+  room.Machines         = machines
 
   return room
 }
@@ -70,6 +72,7 @@ func GetInfo(room Room) Room {
 func Scrape() Rooms {
   var rooms = GetLoc()
   var scrape = Rooms{}
+
   for _, room := range rooms {
     scrape = append(scrape, GetInfo(room))
   }
@@ -82,17 +85,21 @@ func String(n int32) string {
   pos := len(buf)
   i := int64(n)
   signed := i < 0
+
   if signed {
     i = -i
   }
+
   for {
     pos--
     buf[pos], i = '0' + byte(i % 10), i / 10
+
     if i == 0 {
       if signed {
         pos--
         buf[pos] = '-'
       }
+
       return string(buf[pos:])
     }
   }
