@@ -60,10 +60,10 @@ func GetInfo(room Room) Room {
 
   c.Visit(url + room.Url)
 
-  room.AvailableWashers = String(availWash)
-  room.TotalWashers     = String(wash)
-  room.AvailableDryers  = String(availDry)
-  room.TotalDryers      = String(dry)
+  room.AvailableWashers = availWash
+  room.TotalWashers     = wash
+  room.AvailableDryers  = availDry
+  room.TotalDryers      = dry
   room.Machines         = machines
 
   return room
