@@ -1,2 +1,2 @@
 server:
-	go run server.go scrapper.go room.go machine.go
+	go run server.go scrapper.go models/room.go models/machine.go
